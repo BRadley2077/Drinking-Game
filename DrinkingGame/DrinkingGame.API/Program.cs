@@ -14,7 +14,8 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<DrinkingGameDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DrinkingGameConnectionString")));
 
-builder.Services.AddScoped<IUserRepository, SQLUserRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IGameRepository, GameRepository>();
 
 var app = builder.Build();
 

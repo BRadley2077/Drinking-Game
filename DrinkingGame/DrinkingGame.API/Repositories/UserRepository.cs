@@ -6,11 +6,20 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DrinkingGame.API.Repositories;
 
-public class SQLUserRepository : IUserRepository
+public interface IUserRepository
+{
+    Task<List<User>> GetAllAsync();
+    Task<UserDto> CreateAsync(AddUserRequestDto requestDto);
+    Task<UserDto> GetById(Guid id);
+    Task<UserDto> UpdateAsync(Guid userId, UpdateUserRequestDto requestDto);
+    Task<bool> DeleteAsync(Guid id);
+}
+
+public class UserRepository : IUserRepository
 {
     private readonly DrinkingGameDbContext _dbContext;
 
-    public SQLUserRepository(DrinkingGameDbContext dbContext)
+    public UserRepository(DrinkingGameDbContext dbContext)
     {
         _dbContext = dbContext;
     }
