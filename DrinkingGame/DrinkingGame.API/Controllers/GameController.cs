@@ -7,7 +7,9 @@ using DrinkingGame.API.Models.Domain;
 using DrinkingGame.API.Models.DTOs;
 using DrinkingGame.API.Repositories;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 
 namespace DrinkingGame.API.Controllers
 {
@@ -30,6 +32,27 @@ namespace DrinkingGame.API.Controllers
             var games = await _gameRepository.GetAllAsync();
 
             return Ok(_mapper.Map<List<GameDto>>(games));
+        }
+
+        [HttpGet]
+        [Route("{id:Guid}")]
+        public async Task<IActionResult> GetById([FromRoute] Guid id)
+        {
+            var gameDto = await _gameRepository.GetById(id);
+            if (gameDto.GameName.IsNullOrEmpty())
+            {
+                return NotFound();
+            }
+
+            return Ok(gameDto);
+        }
+
+        [HttpPut]
+        [Route("{id:Guid}")]
+        public async Task<IActionResult> UpdateAsync([FromRoute] Guid id, [FromBody] UpdateGameRequestDto requestDto)
+        {
+            var updatedGame = await _gameRepository.UpdateAsync(id, requestDto);
+            return updatedGame.GameName.IsNullOrEmpty() ? NotFound() : Ok(updatedGame);
         }
 
         [HttpPost]

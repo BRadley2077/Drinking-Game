@@ -19,5 +19,7 @@ public class AutoMapperProfiles : Profile
             .ReverseMap();
         CreateMap<GameDto, Game>()
             .ReverseMap();
+        CreateMap<UpdateGameRequestDto, Game>()
+            .ReverseMap();
     }
 }

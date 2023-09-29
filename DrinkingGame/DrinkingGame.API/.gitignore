@@ -81,3 +81,5 @@ fabric.properties
 .idea/caches/build_file_checksums.ser
 
 # End of https://www.toptal.com/developers/gitignore/api/rider
+/bin/Debug/net7.0/AutoMapper.dll
+/bin/Debug/net7.0/AutoMapper.Extensions.Microsoft.DependencyInjection.dll
