@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\build\DrinkingGame.API.props" />
+</Project>
