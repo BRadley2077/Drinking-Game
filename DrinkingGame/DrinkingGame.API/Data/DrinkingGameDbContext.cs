@@ -13,4 +13,14 @@ public class DrinkingGameDbContext : DbContext
     public DbSet<User> Users { get; set; }
     public DbSet<Game> Games { get; set; }
     public DbSet<Rule> Rules { get; set; }
+
+    // protected override void OnModelCreating(ModelBuilder modelBuilder)
+    // {
+    //     base.OnModelCreating(modelBuilder); 
+    //     
+    //     var rules = new List<Rule>
+    //     {
+    //         
+    //     }
+    // }
 }

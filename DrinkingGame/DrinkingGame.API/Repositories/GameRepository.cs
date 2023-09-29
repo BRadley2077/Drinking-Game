@@ -1,11 +1,14 @@
 using DrinkingGame.API.Data;
 using DrinkingGame.API.Models.Domain;
+using DrinkingGame.API.Models.DTOs;
 using Microsoft.EntityFrameworkCore;
 
 namespace DrinkingGame.API.Repositories;
 
 public interface IGameRepository
-{ Task<List<Game>> GetAllAsync();
+{ 
+    Task<List<Game>> GetAllAsync();
+    Task<Game> CreateAsync(Game game);
 }
 
 public class GameRepository : IGameRepository
@@ -19,6 +22,13 @@ public class GameRepository : IGameRepository
 
     public async Task<List<Game>> GetAllAsync()
     {
-        return await _drinkingGameDbContext.Games.ToListAsync();
+        return await _drinkingGameDbContext.Games.Include("CreatedBy").ToListAsync();
+    }
+
+    public async Task<Game> CreateAsync(Game game)
+    {
+        await _drinkingGameDbContext.Games.AddAsync(game);
+        await _drinkingGameDbContext.SaveChangesAsync();
+        return game;
     }
 }

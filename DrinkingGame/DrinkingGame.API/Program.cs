@@ -1,4 +1,5 @@
 using DrinkingGame.API.Data;
+using DrinkingGame.API.Mappings;
 using DrinkingGame.API.Repositories;
 using Microsoft.EntityFrameworkCore;
 
@@ -16,6 +17,9 @@ builder.Services.AddDbContext<DrinkingGameDbContext>(options =>
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IGameRepository, GameRepository>();
+
+
+builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));
 
 var app = builder.Build();
 

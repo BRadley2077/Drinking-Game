@@ -1,6 +1,6 @@
+using AutoMapper;
 using DrinkingGame.API.Models.DTOs;
 using DrinkingGame.API.Repositories;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 
@@ -12,31 +12,20 @@ namespace DrinkingGame.API.Controllers
     {
         
         private readonly IUserRepository _userRepository;
+        private readonly IMapper _mapper; 
 
-        public UserController(IUserRepository userRepository)
+        public UserController(IUserRepository userRepository, IMapper mapper)
         {
             _userRepository = userRepository;
+            _mapper = mapper;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAllAsync()
         {
             var users = await _userRepository.GetAllAsync();
-            var usersDto = new List<UserDto>();
 
-            foreach (var user in users)
-            {
-                usersDto.Add(new UserDto
-                {
-                    Id = user.Id,
-                    UserName = user.UserName,
-                    FirstName = user.FirstName,
-                    LastName = user.LastName,
-                    UserImageUrl = user.UserImageUrl
-                });
-            }
-
-            return Ok(usersDto);
+            return Ok(_mapper.Map<List<UserDto>>(users));
         }
 
         [HttpGet]
