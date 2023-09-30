@@ -1,18 +1,29 @@
+using AutoMapper;
 using DrinkingGame.API.Data;
 using DrinkingGame.API.Models.Domain;
 using DrinkingGame.API.Models.DTOs;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 
 namespace DrinkingGame.API.Repositories;
 
-public class SQLUserRepository : IUserRepository
+public interface IUserRepository
+{
+    Task<List<User>> GetAllAsync();
+    Task<UserDto> CreateAsync(AddUserRequestDto requestDto);
+    Task<UserDto> GetById(Guid id);
+    Task<UserDto> UpdateAsync(Guid userId, UpdateUserRequestDto requestDto);
+    Task<bool> DeleteAsync(Guid id);
+}
+
+public class UserRepository : IUserRepository
 {
     private readonly DrinkingGameDbContext _dbContext;
+    private IMapper _mapper;
 
-    public SQLUserRepository(DrinkingGameDbContext dbContext)
+    public UserRepository(DrinkingGameDbContext dbContext, IMapper mapper)
     {
         _dbContext = dbContext;
+        _mapper = mapper;
     }
     public async Task<List<User>> GetAllAsync()
     {
@@ -23,19 +34,7 @@ public class SQLUserRepository : IUserRepository
     {
         var user = await _dbContext.Users.FindAsync(id);
         
-        if (user == null)
-        {
-            return new UserDto();
-        }
-
-        return new UserDto
-        {
-            Id = user.Id,
-            UserName = user.UserName,
-            FirstName = user.FirstName,
-            LastName = user.LastName,
-            UserImageUrl = user.UserImageUrl
-        };
+        return user == null ? new UserDto() : _mapper.Map<UserDto>(user);
     }
 
     public async Task<UserDto> UpdateAsync(Guid userId, UpdateUserRequestDto requestDto)
@@ -54,37 +53,17 @@ public class SQLUserRepository : IUserRepository
 
         await _dbContext.SaveChangesAsync();
 
-        return new UserDto
-        {
-            Id = user.Id,
-            UserName = user.UserName,
-            FirstName = user.FirstName,
-            LastName = user.LastName,
-            UserImageUrl = user.UserImageUrl
-        };
+        return _mapper.Map<UserDto>(user);
     }
 
     public async Task<UserDto> CreateAsync(AddUserRequestDto requestDto)
     {
-        var userDomainModel = new User
-        {
-            FirstName = requestDto.FirstName,
-            LastName = requestDto.LastName,
-            UserName = requestDto.UserName,
-            UserImageUrl = requestDto.UserImageUrl
-        };
+        var userDomainModel = _mapper.Map<User>(requestDto);
 
         await _dbContext.Users.AddAsync(userDomainModel);
         await _dbContext.SaveChangesAsync();
 
-        return new UserDto
-        {
-            Id = userDomainModel.Id,
-            FirstName = userDomainModel.FirstName,
-            LastName = userDomainModel.LastName,
-            UserName = userDomainModel.UserName,
-            UserImageUrl = userDomainModel.UserImageUrl
-        };
+        return _mapper.Map<UserDto>(userDomainModel);
     }
     
     public async Task<bool> DeleteAsync(Guid id)
