@@ -13,6 +13,7 @@ public interface IGameRepository
     Task<GameDto> GetById(Guid id);
     Task<GameDto> UpdateAsync(Guid id, UpdateGameRequestDto requestDto);
     Task<Game> CreateAsync(Game game);
+    Task<bool> DeleteAsync(Guid id);
 }
 
 public class GameRepository : IGameRepository
@@ -49,11 +50,13 @@ public class GameRepository : IGameRepository
             return new GameDto();
         }
 
-        var updatedGameDto = _mapper.Map<GameDto>(game);
+        game.GameName = requestDto.GameName;
+        game.CreateDate = requestDto.CreateDate;
+        game.CreatedById = requestDto.CreatedById;
         
         await _drinkingGameDbContext.SaveChangesAsync();
 
-        return updatedGameDto;
+        return _mapper.Map<GameDto>(game);
     }
 
     public async Task<Game> CreateAsync(Game game)
@@ -61,5 +64,20 @@ public class GameRepository : IGameRepository
         await _drinkingGameDbContext.Games.AddAsync(game);
         await _drinkingGameDbContext.SaveChangesAsync();
         return game;
+    }
+
+    public async Task<bool> DeleteAsync(Guid id)
+    {
+        var game = await _drinkingGameDbContext.Games.FirstOrDefaultAsync(x => x.Id == id);
+
+        if (game == null)
+        {
+            return false;
+        }
+
+        _drinkingGameDbContext.Remove(game);
+        await _drinkingGameDbContext.SaveChangesAsync();
+
+        return true;
     }
 }

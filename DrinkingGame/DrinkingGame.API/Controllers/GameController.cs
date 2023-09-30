@@ -64,5 +64,19 @@ namespace DrinkingGame.API.Controllers
             
             return Ok(_mapper.Map<GameDto>(newGame));
         }
+
+        [HttpDelete]
+        [Route("{id:Guid}")]
+        public async Task<IActionResult> DeleteAsync([FromRoute] Guid id)
+        {
+            var gameWasDeleted = await _gameRepository.DeleteAsync(id);
+
+            if (!gameWasDeleted)
+            {
+                return NotFound();
+            }
+
+            return Ok();
+        }
     }
 }
